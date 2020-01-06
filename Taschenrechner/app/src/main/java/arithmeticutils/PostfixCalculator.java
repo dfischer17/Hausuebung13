@@ -2,7 +2,7 @@ package arithmeticutils;
 
 import java.math.BigDecimal;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
 
@@ -22,15 +22,54 @@ hierbei entstandene Zahl 7 mit 5 multipliziert).
  */
 
 public class PostfixCalculator {
-    private List<String> expression = new ArrayList<>();
-    private Deque<Double> stack = new ArrayDeque<>();
+    private List<Character> operators = Arrays.asList('+', '-', '*', '/');
+    private String expression; // = new ArrayList<>(); // postfix mathematischer Ausdruck eigl. List<String>!
+    private Deque<Double> stack = new ArrayDeque<>(); //
 
-    public PostfixCalculator(List<String> expression) {
+    public PostfixCalculator(String expression) {
         this.expression = expression;
     }
 
     public BigDecimal getResult() {
+        double result = 0;
 
-        return null;
+        // Ausdruck druchlaufen
+        for (Character curChar : expression.toCharArray()) {
+
+            // Wenn Zeichen ist Zahl
+            if (Character.isDigit(curChar)) {
+                // Zeichen auf Stapel ablegen
+                stack.push((Double.parseDouble(Character.toString(curChar))));
+            }
+
+            // Wenn Zeichen ist Operator
+            else if (operators.contains(curChar)) {
+                double right = stack.pop();
+                double left = stack.pop();
+                result = calc(left, right, curChar);
+                stack.push(result);
+            }
+        }
+        return BigDecimal.valueOf(stack.pop());
+    }
+
+    private double calc(double x, double y, char operation) {
+        switch (operation) {
+            case '+':
+                return x + y;
+
+            case '-':
+                return  x - y;
+
+            case '*':
+                return x * y;
+
+            case '/':
+                return x / y;
+
+            default:
+                System.err.println("Ungueltige Operation!");
+        }
+        return -1;
     }
 }

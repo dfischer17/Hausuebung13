@@ -7,6 +7,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
+
+import arithmeticutils.PostFixConverter;
+import arithmeticutils.PostfixCalculator;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -29,7 +34,15 @@ public class MainActivity extends AppCompatActivity {
 
             // Wenn Button gleich Ergebnis berechnen
             else if (button.getText().toString().equals("=")) {
+                PostFixConverter converter = new PostFixConverter(input.getText().toString());
+                String expression = converter.getPostfixExpression();
+                PostfixCalculator calculator = new PostfixCalculator(expression);
 
+                // Ergebnis des mathematischen Ausdrucks berechnen
+                BigDecimal result = calculator.getResult();
+
+                // Ergebnis in input view schreiben
+                input.setText(String.valueOf(result.doubleValue()));
             }
             // ansonsten Neue Eingabe hinzufuegen
             else {

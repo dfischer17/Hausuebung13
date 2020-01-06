@@ -14,6 +14,9 @@ public class PostFixConverter {
 
     public PostFixConverter(String infix) {
         this.infix = infix;
+
+        // Ausdruck von infix in postfix Notation konvertieren
+        convertExpression();
     }
 
     private void convertExpression() {
@@ -27,12 +30,36 @@ public class PostFixConverter {
 
             // Wenn Zeichen ist Operator
             if (operators.contains(curChar)) {
-                // stack nicht leer || stack spitze ist operator || Token ist linksassoziativ || Präzedenz von Token IST-KLEINER-GLEICH Präzedenz von Stack-Spitze
-                while (!stack.isEmpty() && operators.contains(stack.peek()) &&  && (getPrecedence(curChar) < getPrecedence(stack.peek()))) {
-
+                // stack nicht leer || stack spitze ist operator || Präzedenz von Token IST-KLEINER-GLEICH Präzedenz von Stack-Spitze
+                while (!stack.isEmpty() && operators.contains(stack.peek()) && (getPrecedence(curChar) <= getPrecedence(stack.peek()))) {
+                    // Stackspitze zu Ausgabe hinzugfügen
+                    postfix.add(stack.pop()); // peek
                 }
+                inputToStack(curChar);
             }
 
+            // Wenn Zeichen ist öffnende Klammer
+            if (curChar.equals('(')) {
+                inputToStack(curChar);
+            }
+
+            // Wenn Zeichen ist schliessende Klammer
+            if (curChar.equals(')')) {
+
+                // solange bis Stack Spite ist öffnenede Klammer
+                while (!stack.peek().equals('(')) {
+                    // Fehler: schließenden Klammer geht keine öffnende voraus
+                    // Stackspitze zu Ausgabe
+                    postfix.add(stack.pop());
+                }
+
+                // Stackspitze (oeffnende Klammer) entfernen
+                stack.remove(stack.peek());
+            }
+        }
+
+        while (!stack.isEmpty()) {
+            postfix.add(stack.pop());
         }
     }
 
@@ -40,21 +67,38 @@ public class PostFixConverter {
         stack.push(input);
     }
 
-    // TODO
     private int getPrecedence(char op) {
         switch(op) {
             case '+':
-                return
+                return 1;
+
+            case '-':
+                return 1;
+
+            case '*':
+                return 2;
+
+            case '/':
+                return 2;
+
+            case '(':
+                return 3;
+
+            case ')':
+                return 3;
+
+            default:
+                System.err.println("Ungültiges Zeichen fuer getPrecendence!");
         }
+        return -1;
     }
 
     private void clearStack() {
         stack.clear();
     }
 
-    // TODO
     public String getPostfixExpression() {
-        return null;
+        return postfix.toString();
     }
 
     public List<Character> getPostfixAsList() {
